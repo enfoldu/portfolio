@@ -2,13 +2,12 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable
+class Role extends Model
 {
-    use Notifiable, SoftDeletes;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password',
+        'display_name', 'slug', 'description', 'description',
     ];
 
     /**
@@ -38,10 +37,10 @@ class User extends Authenticatable
     ];
 
     /**
-     * The roles that belong to the user.
+     * The users that belong to the role.
      */
-    public function roles()
+    public function users()
     {
-        return $this->belongsToMany('App\Role');
+        return $this->belongsToMany('App\User');
     }
 }

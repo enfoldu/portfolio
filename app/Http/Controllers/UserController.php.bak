@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\User;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    /**
+     * Show the application users.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return view('users.index', ['users' => User::paginate(15)]);
+    }
+
+    /**
+     * Show the application users.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        return view('users.show', ['user' => User::find($id)]);
+    }
+
+    /**
+     * Update the application users.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function patch(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+            'first_name' => 'alpha|max:255',
+            'last_name' => 'alpha|max:255',
+            'email' => 'email',
+        ]);
+
+        $user = User::find($request->id);
+
+        // If user doesn't exits then return false.
+        if (is_null($user)) return response()->json(['patched' => false], 404);
+
+        // Look for non-empty values and update the db with them.
+        /*foreach ($request->all() as $key => $value) {
+            if ($request->has($key)) $user->$key = $value;
+        }*/
+
+        if ($request->has('first_name')) $user->first_name = $request->first_name;
+
+        if ($request->has('last_name')) $user->last_name = $request->last_name;
+
+        if ($request->has('email')) $user->email = $request->email;
+
+        $user->save();
+
+        return response()->json(['patched' => true]);
+    }
+
+    /**
+     * Delete the application user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function delete(Request $request)
+    {
+        $user = User::find($request->id);
+
+        // If user doesn't exits then return false.
+        if (is_null($user)) return response()->json(['deleted' => false], 404);
+
+        $user->delete();
+
+        return response()->json(['deleted' => true]);
+    }
+}

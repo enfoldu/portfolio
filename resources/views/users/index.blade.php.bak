@@ -1,0 +1,295 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Users [{{ $users->total() }}]</div>
+
+                <div class="panel-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                {{--<th></th>--}}
+                                <th>#</th>
+                                <th class="hidden-xs hidden-sm">Role</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th class="hidden-xs hidden-sm">Created</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($users as $key => $user)
+                                <tr data-toggle="modal" data-target="#exampleModal"
+                                    data-first_name="{{ $user->first_name }}"
+                                    data-last_name="{{ $user->last_name }}"
+                                    data-email="{{ $user->email }}"
+                                    data-account_number="{{ $user->id }}"
+                                    data-created_at="{{ date('F d, Y', strtotime($user->created_at)) }}"
+                                    data-updated_at="{{ date('F d, Y', strtotime($user->updated_at)) }}">
+                                    <td>{{ ($users->currentpage()-1) * $users->perpage() + $key + 1 }}</td>
+                                    <td class="hidden-xs hidden-sm">-</td>
+                                    <td>{{ $user->first_name }} {{ $user->last_name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td class="hidden-xs hidden-sm">{{ date('F d, Y', strtotime($user->created_at)) }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="pull-right">
+                                    {{ $users->links() }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+                </div>
+                <div class="modal-body">
+
+
+                    <div>
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Overview</a></li>
+                            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Edit</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="home">
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="well">
+                                            <strong>Account #: </strong> <span id="account_number"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="well">
+                                            <strong>Role: </strong> <span id="role"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="well">
+                                            <strong>Created: </strong> <span id="created_at"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="well">
+                                            <strong>Updated: </strong> <span id="updated_at"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="profile">
+
+                                <br>
+
+                                <form class="form-horizontal" role="form" action="{{ url('users/') }}">
+                                    {{ csrf_field() }}
+
+                                    <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
+                                        <label for="first_name" class="col-md-4 control-label">First Name</label>
+
+                                        <div class="col-md-6">
+                                            <input id="first_name" type="text" class="form-control" name="first_name"
+                                                   value="{{ old('first_name') }}" autofocus>
+
+                                            <span id="first_name" class="help-block" style="display: none;">
+                                                <span style="color: red;"><strong></strong></span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group{{ $errors->has('last_name') ? ' has-error' : '' }}">
+                                        <label for="last_name" class="col-md-4 control-label">Last Name</label>
+
+                                        <div class="col-md-6">
+                                            <input id="last_name" type="text" class="form-control" name="last_name"
+                                                   value="{{ old('last_name') }}" autofocus>
+
+                                            <span id="last_name" class="help-block" style="display: none;">
+                                                <span style="color: red;"><strong></strong></span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                                        <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+
+                                        <div class="col-md-6">
+                                            <input id="email" type="email" class="form-control" name="email"
+                                                   value="{{ old('email') }}">
+
+                                            <span id="email" class="help-block" style="display: none;">
+                                                <span style="color: red;"><strong></strong></span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {{--<div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                                        <label for="email" class="col-md-4 control-label">Role</label>
+
+                                        <div class="col-md-6">
+                                            <input id="role" type="text" class="form-control" name="email"
+                                                   value="User">
+                                        </div>
+                                    </div>--}}
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {{--<button type="button" class="btn btn-warning pull-left" data-toggle="collapse" href="#collapseExample">Delete</button>--}}
+                    <div class="dropdown pull-left">
+                        <button id="dLabel" type="button" class="btn btn-danger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Delete
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dLabel">
+                            <li><a href="#" class="btn-delete">Yes, Delete user.</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-update">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    <script>
+        $('#exampleModal').on('show.bs.modal', function (event) {
+            var modal = $(this);
+
+            modalOpen(event, modal);
+        })
+    </script>
+
+    <script>
+        $(".modal-footer .btn-delete").click(function(event){
+            var deleteButton = $(this);
+            var accountNumber = deleteButton.data('account_number');
+
+            sendAjax('DELETE', accountNumber);
+        });
+    </script>
+
+    <script>
+        $(".modal-footer .btn-update").click(function(event){
+            var updateButton = $(this);
+            var accountNumber = updateButton.data('account_number');
+
+            sendAjax('PATCH', accountNumber);
+        });
+    </script>
+
+    <script>
+        function modalOpen(event, modal) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+
+            // Grab unique data from specific user.
+            var fistName = button.data('first_name');
+            var lastName = button.data('last_name');
+            var email = button.data('email');
+            var accountNumber = button.data('account_number');
+            var createdAt = button.data('created_at');
+            var updatedAt = button.data('updated_at');
+
+            // Populate the modal's content with unique user data:
+
+            // Populate overview.
+            modal.find('.modal-body span#account_number').text(accountNumber);
+            modal.find('.modal-body span#created_at').text(createdAt);
+            modal.find('.modal-body span#updated_at').text(updatedAt);
+
+            // Populate input fields.
+            modal.find('.modal-title').text(fistName + " " + lastName + "'s Details");
+            modal.find('.modal-body input#first_name').val(fistName);
+            modal.find('.modal-body input#last_name').val(lastName);
+            modal.find('.modal-body input#email').val(email);
+
+            // Populate buttons.
+            modal.find('.modal-footer .btn-delete').data('account_number', accountNumber);
+            modal.find('.modal-footer .btn-update').data('account_number', accountNumber);
+
+            clearForm();
+        }
+    </script>
+
+    <script>
+        function sendAjax(type, accountNumber) {
+            var form = $('.modal-body form');
+            var url = form.attr('action');
+            var data = form.serialize() + '&' + 'id=' + accountNumber;
+
+            clearForm();
+
+            prepAjax(url, type, data);
+        }
+    </script>
+
+    <script>
+        function prepAjax(url, type, data) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax(this.href, {
+                url: url,
+                data: data,
+                type: type,
+                success: function(data) {
+                    location.reload();
+                },
+                error: function(data) {
+                    var errors = data.responseJSON;
+
+                    $.each( errors, function( key, value) {
+                        showError(key, value);
+                    });
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function clearForm() {
+            $('.modal-body form').find('.help-block').attr('style', 'display: none');
+        }
+
+        function showError(key, value) {
+            $('.modal-body form').find('#' + key + '.help-block strong').text(value);
+            $('.modal-body form').find('#' + key + '.help-block').fadeIn( "slow");
+        }
+    </script>
+@endsection
